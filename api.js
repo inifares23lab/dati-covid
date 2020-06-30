@@ -101,3 +101,136 @@ app.get('/account/:name', (req, resp) => {
                 .json({ error: "passwords not matching" })
                 .end(); 
 });
+
+app.patch('/account/:name', (req, resp) => {
+    var action = req.body.action;
+    var username = req.params.name;
+    var myPath = ".DB/".concat(username, ".json");
+
+    if(!fs.existsSync(myPath)) {
+        return resp.status(404)
+                    .json( { error: "user not found" })
+                    .end();
+    }
+        
+    var me = JSON.parse(fs.readFileSync(myPath));
+    var JWT = me.JWT; 
+    
+    var token = req.headers.token;
+
+    if (!token) {
+        return resp.status(412)
+                    .json({ error: "No token provided!" })
+                    .end();
+    }
+
+    jwt.verify(token, JWT, async (err) => {
+        if (err) {
+            return resp.status(401)
+                        .json({ error: "Unauthorized!" })
+                        .end();
+        }
+        
+        var salt = crypto.randomBytes(16).toString('hex'); 
+
+        // Hashing user's salt and password with 1000 iterations, 64 length and sha512 digest 
+        var hash = crypto.pbkdf2Sync(req.headers.password, salt, 1000, 64, `sha512`).toString(`hex`); 
+
+        
+        me.password = hash;
+        me.salt = salt;
+        me.JWT = JWT;
+        var myfile = JSON.stringify(me);
+        fs.writeFileSync(myPath, myfile);
+
+        return resp.status(200)
+                    .json({ message: action
+                            .concat(" for user '"
+                            .concat(username
+                            .concat("' successful!!")))})
+                            .end();
+    });
+});
+
+app.put('/account/:name', (req, resp) => {
+    var action = req.body.action;
+    var username = req.params.name;
+    var myPath = ".DB/".concat(username, ".json");
+
+    if(!fs.existsSync(myPath)) {
+        return resp.status(404)
+                    .json( { error: "user not found"})
+                    .end();
+    }    
+    var me = JSON.parse(fs.readFileSync(myPath));
+    var JWT = me.JWT; 
+    var hash = me.password;
+    var salt = me.salt;
+    
+    var token = req.headers.token;
+
+    if (!token) {
+        return resp.status(412)
+                    .json({ error : "No token provided!" })
+                    .end();
+    }
+
+    jwt.verify(token, JWT, async (err) => {
+        if (err) {
+            return resp.status(401)
+                        .json({ error: "you are not logged in!"})
+                        .end();
+        }
+
+        var info = { password: hash,
+                    salt: salt}
+
+        var myFile = JSON.stringify(info);
+
+        fs.writeFileSync(myPath, myFile);
+
+        return resp.status(200)
+                    .json({ message: action
+                            .concat(" for user '"
+                            .concat(username
+                            .concat("' successful!!")))})
+                            .end();
+    });
+});
+
+app.delete('/account/:name', (req, resp) => {
+    
+    var username = req.params.name;
+    var myPath = ".DB/".concat(username, ".json");
+    
+    if(!fs.existsSync(myPath)) {
+        return resp.status(404)
+                    .json( { error: "user not found"})
+                    .end();
+    }
+    var token = req.headers.token;
+
+    var me = JSON.parse(fs.readFileSync(myPath));
+    var JWT = me.JWT;
+
+    if (!token) {
+        return resp.status(412)
+                    .json({ error: "No token provided!" })
+                    .end();
+    }
+
+    jwt.verify(token , JWT, async (err) => {
+        if (err) {
+            return resp.status(401)
+                        .json({ error: "Unauthorized!"})
+                        .end();
+        }
+
+        fs.unlinkSync(myPath);
+        
+        return resp.status(200)
+                    .json({ message: "account deleted" })
+                    .end();
+        
+    });
+});
