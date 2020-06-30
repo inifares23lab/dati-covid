@@ -13,6 +13,12 @@ const jwt = require("jsonwebtoken");
 //import crypto
 const crypto = require("crypto");
 
+//import axios
+const axios = require('axios');
+
+//import moment
+const moment = require("moment");
+
 // Initialise the app 
 const app = express();
 
@@ -233,4 +239,140 @@ app.delete('/account/:name', (req, resp) => {
                     .end();
         
     });
+});
+
+
+app.get('/regions/:name', (req, resp) => {
+    
+    var username = req.params.name;
+    var date = req.query.date;
+    
+    if ((!moment(date, "YYYY-MM-DD").isValid()) || (date.length != 10)){
+        return resp.status(406)
+                    .json( { error: "wrong date format!!"})
+                    .end();
+    }
+    
+    var myPath = ".DB/".concat(username.concat(".json"));
+    
+    if(!fs.existsSync(myPath)){    
+            return resp.status(404)
+                        .json( { error : "user not found!!" })
+                        .end();
+        }
+
+    var me = JSON.parse(fs.readFileSync(myPath));
+    var JWT = me.JWT;
+
+    var token = req.headers.token;
+    
+    if (!token) {
+        return resp.status(412)
+                    .json({ error: "No token provided!" })
+                    .end();
+    }
+
+    jwt.verify(token , JWT, async (err) => {
+        if (err) {
+            return resp.status(401)
+                        .json({ error: "Unauthorized!"})
+                        .end();
+        }
+    
+        try {  
+            axios.get("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-regioni.json")
+                .catch(err => {
+                    console.log(err);
+                })   
+                .then(res => {
+                    var myRegions = res.data.filter(function (reg) {
+                        var myRegion;
+                        for (region of req.body){
+                            if((reg["denominazione_regione"] == region) &&
+                                    (reg["data"].slice(0,10) == date)) {
+                                myRegion += reg;
+                            };
+                        }
+                        return myRegion;
+                    })
+                    if(myRegions.length != 0) {
+                        return resp.status(200)
+                                    .json(myRegions)
+                                    .end();
+                    }
+                    return resp.status(404)
+                                .json( { error: "data not found!!"})
+                                .end();
+                })
+            } catch {
+                return resp.status(400)
+                            .json( { error: "something went wrong!!"})
+                            .end();
+            }
+    });
+    
+});
+
+
+app.get('/italy/:name', (req, resp) => {
+    
+    var username = req.params.name;
+    var date = req.query.date;
+    
+    if ((!moment(date, "YYYY-MM-DD").isValid()) || (date.length != 10)){
+        return resp.status(406)
+                    .json( { error: "wrong date format!!"})
+                    .end();
+    }
+    
+    var myPath = ".DB/".concat(username.concat(".json"));
+    
+    if(!fs.existsSync(myPath)){    
+            return resp.status(404)
+                        .json( { error : "user not found!!" })
+                        .end();
+        }
+
+    var me = JSON.parse(fs.readFileSync(myPath));
+    var JWT = me.JWT;
+
+    var token = req.headers.token;
+    
+    if (!token) {
+        return resp.status(412)
+                    .json({ error: "No token provided!" })
+                    .end();
+    }
+
+    jwt.verify(token , JWT, async (err) => {
+        if (err) {
+            return resp.status(401)
+                        .json({ error: "Unauthorized!"})
+                        .end();
+        }
+    
+            try {  
+                axios.get("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale.json")
+                    .catch(err => {
+                        console.log(err);
+                    })   
+                    .then(res => {
+                        var myData = res.data.filter(function (data) {
+                            return data["data"].slice(0,10) === date;
+                        })
+                        if(myData.length != 0) {
+                            return resp.status(200)
+                                        .json(myData)
+                                        .end();
+                        }
+                        return resp.status(404)
+                                    .json( { error: "data not found!!"})
+                                    .end();
+                    })
+            } catch {
+                return resp.status(400)
+                            .json( { error: "something went wrong!!"})
+                            .end();
+            }
+    });  
 });
