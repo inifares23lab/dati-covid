@@ -242,10 +242,10 @@ app.delete('/account/:name', (req, resp) => {
 });
 
 
-app.get('/regions/:name', (req, resp) => {
+app.get('/regions/:name/:date', (req, resp) => {
     
     var username = req.params.name;
-    var date = req.query.date;
+    var date = req.params.date;
     
     if ((!moment(date, "YYYY-MM-DD").isValid()) || (date.length != 10)){
         return resp.status(406)
@@ -314,10 +314,10 @@ app.get('/regions/:name', (req, resp) => {
 });
 
 
-app.get('/italy/:name', (req, resp) => {
+app.get('/italy/:name/:date', (req, resp) => {
     
     var username = req.params.name;
-    var date = req.query.date;
+    var date = req.params.date;
     
     if ((!moment(date, "YYYY-MM-DD").isValid()) || (date.length != 10)){
         return resp.status(406)
