@@ -19,6 +19,13 @@ const axios = require('axios');
 //import moment
 const moment = require("moment");
 
+//import lowdb
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+const adapter = new FileSync("db.json");
+const db = low(adapter);
+db.defaults({users: []}).write();
+
 // Initialise the app 
 const app = express();
 
@@ -40,15 +47,13 @@ app.get('/', (req, resp) => {
 app.post('/account', (req, resp) => {
     var username = req.body.name;
 
-    var myPath = ".DB/".concat(username, ".json");
-    if(fs.existsSync(myPath)) {
+    const user = db.get("users")
+                    .find({username: username});
+
+    if(user.value()) {
         return resp.status(400)
                     .json( {error: "username already in use"})
                     .end();
-    }
-
-    if(!fs.existsSync(".DB")){
-        fs.mkdirSync(".DB");
     }
 
     var salt = crypto.randomBytes(16).toString('hex'); 
@@ -56,12 +61,17 @@ app.post('/account', (req, resp) => {
     // Hashing user's salt and password with 1000 iterations, 64 length and sha512 digest 
     var hash = crypto.pbkdf2Sync(req.headers.password, salt, 1000, 64, `sha512`).toString(`hex`); 
 
-    var info = { password: hash,
-                salt: salt}
+    var newUser = { username: username, 
+                password: hash,
+                salt: salt,
+                JWT: ""}
+    
+    db.get('users').push(newUser).write();
 
-    var myFile = JSON.stringify(info);
+    
+    // var myFile = JSON.stringify(info);
 
-    fs.writeFileSync(myPath, myFile);
+    // fs.writeFileSync(myPath, myFile);
 
     return resp.status(201)
                 .json({ message: username
@@ -73,15 +83,28 @@ app.post('/account', (req, resp) => {
 app.get('/account/:name', (req, resp) => {
 
     var username = req.params.name;
-    var myPath = ".DB/".concat(username, ".json");
-    if(!fs.existsSync(myPath)) {
-        return resp.status(404)
-                .json({ error: "username not found"})
-                .end();
+
+    const user = db.get("users")
+                    .find({username: username});
+    
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
+                    .end();
     }
-    var db = JSON.parse(fs.readFileSync(myPath));    
-    var hash = db.password;
-    var salt = db.salt;
+
+    var hash = db.get("users")
+                .filter({username: username})
+                .map("password")
+                .value()
+                .toString();
+
+    var salt = db.get("users")
+                .filter({username: username})
+                .map("salt")
+                .value()
+                .toString();
+
     var JWT = crypto.randomBytes(16).toString('hex');
 
     var hash2 = crypto.pbkdf2Sync(req.headers.password, salt, 1000, 64, `sha512`).toString(`hex`); 
@@ -90,13 +113,8 @@ app.get('/account/:name', (req, resp) => {
             expiresIn: 8000
         });
 
-        var info = { password: hash,
-                    salt: salt,
-                    JWT: JWT}
-
-        var myFile = JSON.stringify(info);
-
-        fs.writeFileSync(myPath, myFile);
+        user.assign({JWT: JWT})
+            .write();
 
         resp.setHeader("Token" , token);
         return resp.status(200)
@@ -109,18 +127,22 @@ app.get('/account/:name', (req, resp) => {
 });
 
 app.patch('/account/:name', (req, resp) => {
-    var action = req.body.action;
     var username = req.params.name;
-    var myPath = ".DB/".concat(username, ".json");
+    
+    const user = db.get("users")
+                    .find({username: username});
 
-    if(!fs.existsSync(myPath)) {
-        return resp.status(404)
-                    .json( { error: "user not found" })
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
                     .end();
     }
         
-    var me = JSON.parse(fs.readFileSync(myPath));
-    var JWT = me.JWT; 
+    var JWT = db.get("users")
+                .filter({username: username})
+                .map("JWT")
+                .value()
+                .toString();
     
     var token = req.headers.token;
 
@@ -143,35 +165,34 @@ app.patch('/account/:name', (req, resp) => {
         var hash = crypto.pbkdf2Sync(req.headers.password, salt, 1000, 64, `sha512`).toString(`hex`); 
 
         
-        me.password = hash;
-        me.salt = salt;
-        me.JWT = JWT;
-        var myfile = JSON.stringify(me);
-        fs.writeFileSync(myPath, myfile);
+        user.assign({password: hash})
+            .assign({salt: salt})
+            .assign({JWT: JWT})
+            .write();
 
         return resp.status(200)
-                    .json({ message: action
-                            .concat(" for user '"
-                            .concat(username
-                            .concat("' successful!!")))})
+                    .json({ message: "update successful!!"})
                             .end();
     });
 });
 
 app.put('/account/:name', (req, resp) => {
-    var action = req.body.action;
     var username = req.params.name;
-    var myPath = ".DB/".concat(username, ".json");
-
-    if(!fs.existsSync(myPath)) {
-        return resp.status(404)
-                    .json( { error: "user not found"})
+    
+    const user = db.get("users")
+                    .find({username: username});
+    
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
                     .end();
     }    
-    var me = JSON.parse(fs.readFileSync(myPath));
-    var JWT = me.JWT; 
-    var hash = me.password;
-    var salt = me.salt;
+    
+    var JWT = db.get("users")
+                .filter({username: username})
+                .map("JWT")
+                .value()
+                .toString();
     
     var token = req.headers.token;
 
@@ -188,18 +209,11 @@ app.put('/account/:name', (req, resp) => {
                         .end();
         }
 
-        var info = { password: hash,
-                    salt: salt}
-
-        var myFile = JSON.stringify(info);
-
-        fs.writeFileSync(myPath, myFile);
+        user.assign({JWT: ""})
+            .write();
 
         return resp.status(200)
-                    .json({ message: action
-                            .concat(" for user '"
-                            .concat(username
-                            .concat("' successful!!")))})
+                    .json({ message: "logout successful!!"})
                             .end();
     });
 });
@@ -207,17 +221,22 @@ app.put('/account/:name', (req, resp) => {
 app.delete('/account/:name', (req, resp) => {
     
     var username = req.params.name;
-    var myPath = ".DB/".concat(username, ".json");
+    const user = db.get("users")
+                    .find({username: username});
     
-    if(!fs.existsSync(myPath)) {
-        return resp.status(404)
-                    .json( { error: "user not found"})
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
                     .end();
-    }
-    var token = req.headers.token;
+    }    
+    
+    var JWT = db.get("users")
+                .filter({username: username})
+                .map("JWT")
+                .value()
+                .toString();
 
-    var me = JSON.parse(fs.readFileSync(myPath));
-    var JWT = me.JWT;
+    var token = req.headers.token;
 
     if (!token) {
         return resp.status(412)
@@ -232,8 +251,10 @@ app.delete('/account/:name', (req, resp) => {
                         .end();
         }
 
-        fs.unlinkSync(myPath);
-        
+        db.get("users")
+            .remove({username: username})
+            .write();
+
         return resp.status(200)
                     .json({ message: "account deleted" })
                     .end();
@@ -253,16 +274,20 @@ app.get('/regions/:name/:date', (req, resp) => {
                     .end();
     }
     
-    var myPath = ".DB/".concat(username.concat(".json"));
+    const user = db.get("users")
+                    .find({username: username});
     
-    if(!fs.existsSync(myPath)){    
-            return resp.status(404)
-                        .json( { error : "user not found!!" })
-                        .end();
-        }
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
+                    .end();
+    }  
 
-    var me = JSON.parse(fs.readFileSync(myPath));
-    var JWT = me.JWT;
+    var JWT = db.get("users")
+                .filter({username: username})
+                .map("JWT")
+                .value()
+                .toString();
 
     var token = req.headers.token;
     
@@ -325,16 +350,20 @@ app.get('/italy/:name/:date', (req, resp) => {
                     .end();
     }
     
-    var myPath = ".DB/".concat(username.concat(".json"));
+    const user = db.get("users")
+                    .find({username: username});
     
-    if(!fs.existsSync(myPath)){    
-            return resp.status(404)
-                        .json( { error : "user not found!!" })
-                        .end();
-        }
+    if(!user.value()) {
+        return resp.status(400)
+                    .json( {error: "username not found"})
+                    .end();
+    }  
 
-    var me = JSON.parse(fs.readFileSync(myPath));
-    var JWT = me.JWT;
+    var JWT = db.get("users")
+                .filter({username: username})
+                .map("JWT")
+                .value()
+                .toString();
 
     var token = req.headers.token;
     
