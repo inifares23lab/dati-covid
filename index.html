@@ -1,0 +1,725 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Data-Covid-API</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>Data-Covid-API</h1>
+    <div class="app-desc">API to check Covid-19 data in Italy</div>
+    <div class="app-desc">More information: <a href="https://github.com/Matteoserafini-lab/dati-covid">https://github.com/Matteoserafini-lab/dati-covid</a></div>
+    <div class="app-desc">Contact Info: <a href="https://github.com/Matteoserafini-lab/dati-covid/issues">https://github.com/Matteoserafini-lab/dati-covid/issues</a></div>
+    <div class="app-desc">Version: 0.1</div>
+    <div class="app-desc">BasePath: <a href="https://dati-covid.herokuapp.com">https://dati-covid.herokuapp.com</a></div>
+    <div class="license-info">Creative Commons Attribution 4.0 International</div>
+    <div class="license-url"><a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0</a></div>
+    <div class="method-notes"></div>
+  <h1><a class="#Default">Methods</a></h1>
+  <ul>
+  <li><a href="#accountPost"><code><span class="http-method">post</span> /account</code></a></li>
+  <li><a href="#accountDelete"><code><span class="http-method">delete</span> /account/:name</code></a></li>
+  <li><a href="#accountGet"><code><span class="http-method">get</span> /account/:name</code></a></li>
+  <li><a href="#accountPatch"><code><span class="http-method">patch</span> /account/:name</code></a></li>
+  <li><a href="#accountPut"><code><span class="http-method">put</span> /account/:name</code></a></li>
+  <li><a href="#ItalyGet"><code><span class="http-method">get</span> /italy/:name/:date</code></a></li>
+  <li><a href="#regionsPost"><code><span class="http-method">post</span> /regions/:name/:date</code></a></li>
+  <li><a href="#rootGet"><code><span class="http-method">get</span> /</code></a></li>
+  <li><a href="#visitsGet"><code><span class="http-method">get</span> /visits</code></a></li>
+  </ul>
+   
+  <div class="method"><a name="accountPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /account</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/account</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Creates an account
+    <div class="method-notes"></div>
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body (required)</h3>
+    <div class="field-items">
+      <div class="param">name (required)</div>
+      <pre class="example"><code>{
+  "name" : "YOUR_USERNAME"
+}</code></pre>
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">password (required)</div>
+      <pre class="example"><code>{
+  "password" : "YOUR_PASSWORD"
+}</code></pre>
+<div class="method-notes"></div>
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label"> 201</h4>
+    <pre class="example"><code>{
+  "message" : "YOUR_USERNAME added!!"
+
+}</code></pre>
+    <h4 class="field-label"> 400</h4>
+    <pre class="example"><code>{
+  "error" : "YOUR_USERNAME already in use"
+}</code></pre>
+
+  </div> <!-- method -->
+  
+  <!-- METHOD DELETE TO DELETE ACCOUNT -->
+  
+<hr/>
+  <div class="method"><a name="accountDelete"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="delete"><code class="huge"><span class="http-method">delete</span> /account/:name</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/account/YOUR_USERNAME</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Deletes the account associated to the username on path
+    <div class="method-notes"></div>
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">token (required)</div>
+      <pre class="example"><code>{
+  "token" : "TOKEN_GENERATED_ON_LOGIN"
+}</code></pre>
+    <div class="method-notes"></div>
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">  200</h4>
+    <pre class="example"><code>{
+  "message" : "account deleted"
+}</code></pre>
+    <h4 class="field-label">  400</h4>
+<pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "message" : "Unauthorized!"
+}</code></pre>
+    <h4 class="field-label"> 412</h4>
+    <pre class="example"><code>{
+  "error" : "No token provided!"
+}</code></pre>
+
+      <!-- METHOD GET TO LOGIN -->
+
+  <hr/>
+  <div class="method"><a name="accountGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /account/:name</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/account/YOUR_USERNAME</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Login for the account associated to YOUR_USERNAME
+    <div class="method-notes"></div>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">password (required)</div>
+      <pre class="example"><code>{
+  "password" : "YOUR_PASSWORD"
+}</code></pre>
+    <!-- field-items -->
+    <div class="method-notes"></div>
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label"> 200</h4>
+    <pre class="example"><code>{
+  "message" : "login successful!!"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "error" : "passwords not matching"
+}</code></pre>
+    <h4 class="field-label"> 400</h4>
+    <pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre> 
+ 
+  <hr/>
+  <div class="method"><a name="accountPatch"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="patch"><code class="huge"><span class="http-method">patch</span> /account/:name</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/account/YOUR_USERNAME</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Changes the password for the account associated to YOUR_USERNAME
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">password (required)</div>
+      <div class="param">token (required)</div>
+
+      <pre class="example"><code>{
+  "password" : "YOUR_PASSWORD",
+  "token" : "TOKEN_GENERATED_ON_LOGIN"
+}</code></pre><!-- field-items -->
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">  200</h4>
+    <pre class="example"><code>{
+  "message": "update successful!!"
+}</code></pre>
+    <h4 class="field-label">  400</h4>
+    <pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "message" : "Unauthorized!"
+}</code></pre>
+    <h4 class="field-label"> 412</h4>
+    <pre class="example"><code>{
+  "error" : "No token provided!"
+}</code></pre>
+  </div> <!-- method -->
+
+
+  <!-- PUT ACCOUNT  -->
+  <hr/>
+  <div class="method"><a name="accountPut"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="put"><code class="huge"><span class="http-method">put</span> /account/:name</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/account/YOUR_USERNAME</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Logout for the account associated to YOUR_USERNAME
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">token (required)</div>
+      <pre class="example"><code>{
+  "token" : "TOKEN_GENERATED_ON_LOGIN"
+}</code></pre>      
+    </div>  <!-- field-items -->
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">  200</h4>
+    <pre class="example"><code>{
+  "message" : "logout successful!!"
+}</code></pre>
+    <h4 class="field-label">  400</h4>
+    <pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "message" : "you are not logged in!"
+}</code></pre>
+    <h4 class="field-label"> 412</h4>
+    <pre class="example"><code>{
+  "error" : "No token provided!"
+}</code></pre>
+
+
+      <!-- ITALY GET -->
+  <hr/>
+  <div class="method"><a name="ItalyGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /italy/:name/:date</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/italy/YOUR_USERNAME/YYYY-MM-DD</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Request data for the whole of Italy in date:YYYY-MM-DD
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">token (required)</div>
+      <pre class="example"><code>{
+  "token" : "TOKEN_GENERATED_ON_LOGIN"
+}</code></pre>
+    </div>  <!-- field-items -->
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">  200</h4>
+    <pre class="example"><code>[
+  {
+    "data": "2020-07-23T17:00:00",
+    "stato": "ITA",
+    "ricoverati_con_sintomi": 713,
+    "terapia_intensiva": 49,
+    "totale_ospedalizzati": 762,
+    "isolamento_domiciliare": 11642,
+    "totale_positivi": 12404,
+    "variazione_totale_positivi": 82,
+    "nuovi_positivi": 306,
+    "dimessi_guariti": 197842,
+    "deceduti": 35092,
+    "casi_da_sospetto_diagnostico": 222279,
+    "casi_da_screening": 23059,
+    "totale_casi": 245338,
+    "tamponi": 6415041,
+    "casi_testati": 3840789,
+    "note": null
+  }
+]</code></pre>
+    <h4 class="field-label">  400</h4>
+    <pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre>
+    <pre class="example"><code>{
+  "error" : "something went wrong!"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "error" : "Unauthorized!"
+}</code></pre>
+    <h4 class="field-label"> 412</h4>
+    <pre class="example"><code>{
+  "error" : "No token provided!"
+}</code></pre>
+    <h4 class="field-label"> 406</h4>
+    <pre class="example"><code>{
+  "error" : "wrong date format!"
+}</code></pre>
+    <h4 class="field-label"> 404</h4>
+    <pre class="example"><code>{
+  "error" : "data not found!"
+}</code></pre>
+  </div> <!-- method -->
+
+
+  <!-- REGIONS POST -->
+  <hr/>
+  <div class="method"><a name="regionsPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /regions/:name/:date</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/regions/YOUR_USERNAME/YYYY-MM-DD</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Requests data for regions selected in the body in date:YYYY-MM-DD
+    Updates visits per region count
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <pre class="example"><code>[
+  "Abruzzo",
+  "Basilicata"
+]</code></pre>
+    
+    <h3 class="field-label">Request headers</h3>
+    <div class="field-items">
+      <div class="param">token (required)</div>
+      <pre class="example"><code>{
+  "token" : "TOKEN_GENERATED_ON_LOGIN"
+}</code></pre>
+    </div>  <!-- field-items -->
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">  200</h4>
+    <pre class="example"><code>[
+  {
+    "data": "2020-07-23T17:00:00",
+    "stato": "ITA",
+    "codice_regione": 13,
+    "denominazione_regione": "Abruzzo",
+    "lat": 42.35122196,
+    "long": 13.39843823,
+    "ricoverati_con_sintomi": 8,
+    "terapia_intensiva": 2,
+    "totale_ospedalizzati": 10,
+    "isolamento_domiciliare": 105,
+    "totale_positivi": 115,
+    "variazione_totale_positivi": 6,
+    "nuovi_positivi": 10,
+    "dimessi_guariti": 2767,
+    "deceduti": 470,
+    "casi_da_sospetto_diagnostico": 3125,
+    "casi_da_screening": 227,
+    "totale_casi": 3352,
+    "tamponi": 122303,
+    "casi_testati": 80636,
+    "note": null
+  },
+  {
+    "data": "2020-07-23T17:00:00",
+    "stato": "ITA",
+    "codice_regione": 17,
+    "denominazione_regione": "Basilicata",
+    "lat": 40.63947052,
+    "long": 15.80514834,
+    "ricoverati_con_sintomi": 2,
+    "terapia_intensiva": 0,
+    "totale_ospedalizzati": 2,
+    "isolamento_domiciliare": 44,
+    "totale_positivi": 46,
+    "variazione_totale_positivi": 3,
+    "nuovi_positivi": 3,
+    "dimessi_guariti": 373,
+    "deceduti": 28,
+    "casi_da_sospetto_diagnostico": 402,
+    "casi_da_screening": 45,
+    "totale_casi": 447,
+    "tamponi": 45091,
+    "casi_testati": 44306,
+    "note": null
+  }
+]</code></pre>
+    <h4 class="field-label">  400</h4>
+    <pre class="example"><code>{
+  "error" : "username not found"
+}</code></pre>
+    <pre class="example"><code>{
+  "error" : "something went wrong!"
+}</code></pre>
+    <h4 class="field-label"> 401</h4>
+    <pre class="example"><code>{
+  "error" : "Unauthorized!"
+}</code></pre>
+    <h4 class="field-label"> 412</h4>
+    <pre class="example"><code>{
+  "error" : "No token provided!"
+}</code></pre>
+    <h4 class="field-label"> 406</h4>
+    <pre class="example"><code>{
+  "error" : "wrong date format!"
+}</code></pre>
+    <h4 class="field-label"> 404</h4>
+    <pre class="example"><code>{
+  "error" : "data not found!"
+}</code></pre>
+  </div> <!-- method -->
+
+  <!-- ROOT GET  -->
+  <hr/>
+  <div class="method"><a name="rootGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Homepage comunicating API's title(no login required)
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>text/html</code></li>
+    </ul>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+        Coronavirus data in Italy
+  </div> <!-- method -->
+  
+  <!-- VISITS GET  -->
+  
+  <hr/>
+  <div class="method"><a name="visitsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /visits</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">https://dati-covid.herokuapp.com/visits?region=Abruzzo</span>)</div>
+    <h3 class="field-label">Description</h3>
+    Request number of visits per 1 region or every region(no login required)
+    <div class="method-notes"></div>
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">region (optional)</div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+    <div class="method-notes"></div>
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label"> 200</h4>
+    <h5 class="field-label">with query: ?region=Abruzzo</h5>
+    <pre class="example"><code>[
+  {
+    "region": "Abruzzo",
+    "visits": [
+        4
+    ]
+  }
+]</code></pre>
+    <h5 class="field-label">no query</h5>
+    <pre class="example"><code>[
+  {
+    "region": "Abruzzo",
+    "visits": [
+        4
+    ]
+  },
+  {
+    "region": "Basilicata",
+    "visits": [
+        4
+    ]
+  },
+  { 
+    "region": "Calabria",
+    "visits": [
+        3
+    ]
+  }
+]
+.....</code></pre>
+  </div> <!-- method -->
+  <hr/>
+  </body>
+</html>

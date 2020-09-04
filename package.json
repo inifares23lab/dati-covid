@@ -14,10 +14,8 @@
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
-    "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "lowdb": "^1.0.0",
-    "moment": "^2.27.0",
-    "swagger-ui-express": "^4.1.4"
+    "moment": "^2.27.0"
   }
 }

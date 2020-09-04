@@ -4,9 +4,6 @@ const express = require('express');
 // Import Body parser
 const bodyParser = require('body-parser');
 
-//import fs
-const fs = require("fs");
-
 //import passport
 const jwt = require("jsonwebtoken");
 
@@ -41,7 +38,7 @@ app.use(bodyParser.json());
 
 
 app.get('/', (req, resp) => {
-    resp.status(200).send('Coronavirus data in Italy');
+    resp.status(200).send('API to check Covid-19 data in Italy');
 });
 
 app.post('/account', (req, resp) => {
