@@ -1,3 +1,144 @@
 {
-  "users": []
+  "users": [
+    {
+      "username": "test",
+      "password": "36452c00ac90fc13f15b136ba472832c3e422370b89fd3888c768527522fcc41c308ab241a15dd8b1de028de52d61a52e328687e668c58cf0bb969f7491eda91",
+      "salt": "ae0ebd5ce6a3b33b0fd1e63e6974c10f",
+      "JWT": "7a1a16a42db55865ac428b4d902ba9f8"
+    },
+    {
+      "username": "t",
+      "password": "aa231f06d1fd2a5e768cd01c2f8d11d7a757e886d1e21bbc8acfedffd74a2c77dcf1a2fccf7423afefe0fe059efdf679dbe90e0577693ee43dad6221af2ad4c7",
+      "salt": "018a2f423237bd093447e908e023ee74",
+      "JWT": "bc88ec112274aab8eb07fbd77902d4c4"
+    }
+  ],
+  "visitsPerRegion": [
+    {
+      "region": "Abruzzo",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Basilicata",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Calabria",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Campania",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Emilia-Romagna",
+      "visits": [
+        2
+      ]
+    },
+    {
+      "region": "Friuli Venezia Giulia",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Lazio",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Liguria",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Lombardia",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Marche",
+      "visits": [
+        2
+      ]
+    },
+    {
+      "region": "Molise",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "P.A. Bolzano",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "P.A. Trento",
+      "visits": [
+        2
+      ]
+    },
+    {
+      "region": "Piemonte",
+      "visits": [
+        2
+      ]
+    },
+    {
+      "region": "Puglia",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Sardegna",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Sicilia",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Toscana",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Umbria",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Valle d'Aosta",
+      "visits": [
+        3
+      ]
+    },
+    {
+      "region": "Veneto",
+      "visits": [
+        3
+      ]
+    }
+  ]
 }

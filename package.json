@@ -4,7 +4,6 @@
   "description": "",
   "main": "api.js",
   "scripts": {
-    "test": "nodemon api.js",
     "start": "node api"
   },
   "keywords": [],
@@ -19,6 +18,6 @@
     "jsonwebtoken": "^8.5.1",
     "lowdb": "^1.0.0",
     "moment": "^2.27.0",
-    "nodemon": "^2.0.4"
+    "swagger-ui-express": "^4.1.4"
   }
 }

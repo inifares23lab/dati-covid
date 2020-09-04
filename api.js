@@ -24,7 +24,7 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const adapter = new FileSync("db.json");
 const db = low(adapter);
-db.defaults({users: []}).write();
+db.defaults({users: [], visitsPerRegion: []}).write();
 
 // Initialise the app 
 const app = express();
@@ -66,12 +66,9 @@ app.post('/account', (req, resp) => {
                 salt: salt,
                 JWT: ""}
     
-    db.get('users').push(newUser).write();
-
-    
-    // var myFile = JSON.stringify(info);
-
-    // fs.writeFileSync(myPath, myFile);
+    db.get('users')
+        .push(newUser)
+        .write();
 
     return resp.status(201)
                 .json({ message: username
@@ -263,11 +260,11 @@ app.delete('/account/:name', (req, resp) => {
 });
 
 
-app.get('/regions/:name/:date', (req, resp) => {
+app.post('/regions/:name/:date', (req, resp) => {
     
     var username = req.params.name;
     var date = req.params.date;
-    
+        
     if ((!moment(date, "YYYY-MM-DD").isValid()) || (date.length != 10)){
         return resp.status(406)
                     .json( { error: "wrong date format!!"})
@@ -315,6 +312,23 @@ app.get('/regions/:name/:date', (req, resp) => {
                         for (region of req.body){
                             if((reg["denominazione_regione"] == region) &&
                                     (reg["data"].slice(0,10) == date)) {
+                                var vPR = db.get("visitsPerRegion")
+                                            .find({region: region});
+                                if(vPR.value()) {
+                                    var visits = Number(db.get("visitsPerRegion")
+                                                    .filter({region: region})
+                                                    .map("visits")
+                                                    .value());
+                                    vPR.assign({visits: [visits+1]})
+                                        .write();
+                                } else {
+                                    var newRegion =  {region: region,
+                                                    visits: 1};
+                                    
+                                    db.get('visitsPerRegion')
+                                        .push(newRegion)
+                                        .write();
+                                }
                                 myRegion += reg;
                             };
                         }
@@ -379,29 +393,52 @@ app.get('/italy/:name/:date', (req, resp) => {
                         .json({ error: "Unauthorized!"})
                         .end();
         }
-    
-            try {  
-                axios.get("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale.json")
-                    .catch(err => {
-                        console.log(err);
-                    })   
-                    .then(res => {
-                        var myData = res.data.filter(function (data) {
-                            return data["data"].slice(0,10) === date;
-                        })
-                        if(myData.length != 0) {
-                            return resp.status(200)
-                                        .json(myData)
-                                        .end();
-                        }
-                        return resp.status(404)
-                                    .json( { error: "data not found!!"})
-                                    .end();
+
+        try {  
+            axios.get("https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-json/dpc-covid19-ita-andamento-nazionale.json")
+                .catch(err => {
+                    console.log(err);
+                })   
+                .then(res => {
+                    var myData = res.data.filter(function (data) {
+                        return data["data"].slice(0,10) === date;
                     })
-            } catch {
-                return resp.status(400)
-                            .json( { error: "something went wrong!!"})
-                            .end();
-            }
+                    if(myData.length != 0) {
+                        return resp.status(200)
+                                    .json(myData)
+                                    .end();
+                    }
+                    return resp.status(404)
+                                .json( { error: "data not found!!"})
+                                .end();
+                })
+        } catch {
+            return resp.status(400)
+                        .json( { error: "something went wrong!!"})
+                        .end();
+        }
     });  
+});
+
+app.get("/visits", (req, resp) => {
+    
+    var region = req.query.region;
+    
+    if(region != "" && region)  {
+        var vPR = db.get("visitsPerRegion")
+                    .filter({region: region})
+                    .value();
+                    
+        return resp.status(200)
+                    .json(vPR)
+                    .end();
+    }
+
+    var vPR = db.get("visitsPerRegion")
+                    .value();
+                    
+    return resp.status(200)
+                .json(vPR)
+                .end();
+
 });
